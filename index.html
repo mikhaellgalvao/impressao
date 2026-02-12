@@ -13,7 +13,7 @@
             --cinza-claro: #f4f7f6;
         }
 
-        /* CONFIGURAÇÃO DE IMPRESSÃO (A4 150mm de largura) */
+        /* CONFIGURAÇÃO DE IMPRESSÃO - A4 150mm */
         @page {
             size: 150mm 297mm;
             margin: 0;
@@ -32,9 +32,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
-        /* Interface do Usuário (Painel de Controle) */
+        /* Interface do Usuário */
         #painel-controle {
             width: 90%;
             max-width: 500px;
@@ -45,120 +46,44 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border-top: 8px solid var(--laranja);
             text-align: center;
+            z-index: 10;
         }
 
-        .logo-main {
-            width: 140px;
-            margin-bottom: 10px;
+        .logo-main { width: 140px; margin-bottom: 10px; }
+        h2 { color: var(--verde-escuro); margin-bottom: 20px; font-size: 1.2rem; text-transform: uppercase; }
+
+        .campo { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-weight: bold; color: #555; margin-bottom: 8px; font-size: 0.85rem; }
+
+        input[type="text"], input[type="number"] {
+            width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px;
+            box-sizing: border-box; font-size: 1.5rem; text-align: center; font-weight: bold; color: var(--verde-escuro);
         }
 
-        h2 {
-            color: var(--verde-escuro);
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .grid-copias { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .opcao-copia input { position: absolute; opacity: 0; cursor: pointer; }
+        .opcao-copia label { display: block; padding: 12px 0; background: #f0f0f0; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .opcao-copia input:checked + label { background: var(--verde-escuro); color: white; }
 
-        .campo {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            box-sizing: border-box;
-            font-size: 1.5rem;
-            text-align: center;
-            font-weight: bold;
-            color: var(--verde-escuro);
-        }
-
-        /* Seletor de Cópias 1-8 */
-        .grid-copias {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-
-        .opcao-copia input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .opcao-copia label {
-            display: block;
-            padding: 12px 0;
-            background: #f0f0f0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
-        .opcao-copia input:checked + label {
-            background: var(--verde-escuro);
-            color: white;
-        }
-
-        /* Ajustes de Calibração */
         .ajustes-flex {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            background: #fdfdfd;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #eee;
-        }
-
-        .ajustes-flex input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            text-align: center;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            background: #fdfdfd; padding: 15px; border-radius: 10px; border: 1px solid #eee;
         }
 
         .btn-imprimir {
-            width: 100%;
-            padding: 18px;
-            background: var(--verde-escuro);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-            box-shadow: 0 5px 0 #083a2f;
+            width: 100%; padding: 18px; background: var(--verde-escuro); color: white;
+            border: none; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer;
+            margin-top: 20px; box-shadow: 0 5px 0 #083a2f;
         }
 
-        .btn-imprimir:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 #083a2f;
-        }
-
-        /* ÁREA DE IMPRESSÃO - LOGICA DE RODAPÉ */
+        /* ÁREA DE IMPRESSÃO */
         #area-impressao {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 150mm;
-            display: none; /* Escondido na tela */
-            flex-direction: column-reverse; /* Empilha de baixo para cima */
+            display: none;
+            flex-direction: column-reverse; /* Mantém as cópias de baixo para cima */
             background: white;
         }
 
@@ -173,33 +98,30 @@
         .item {
             flex: 1;
             display: flex;
+            flex-direction: column; /* Texto em cima, Logo embaixo */
             align-items: center;
             justify-content: center;
-            gap: 8px;
             height: 100%;
         }
 
         .logo-etiqueta {
-            height: 10mm; /* Tamanho proporcional na etiqueta */
+            height: 8mm; /* Ajustado para caber abaixo do texto */
             width: auto;
+            margin-top: 2px;
         }
 
         .texto-os {
-            font-size: 30pt; /* Tamanho do seu padrão */
+            font-size: 27pt; /* 10% menor que os 30pt anteriores */
             font-weight: bold;
             color: #000;
             margin: 0;
             line-height: 1;
         }
 
-        /* ESTILO EXCLUSIVO DE IMPRESSÃO */
         @media print {
-            body { background: white !important; overflow: hidden; height: 297mm; }
+            body { background: white !important; height: 100%; overflow: hidden; }
             #painel-controle { display: none !important; }
-            #area-impressao { display: flex !important; }
-            
-            /* Remove cabeçalhos e rodapés do navegador */
-            header, footer, nav { display: none !important; }
+            #area-impressao { display: flex !important; position: absolute; }
         }
     </style>
 </head>
@@ -234,20 +156,14 @@
                 <input type="number" id="alt_mm" value="25" step="0.5">
             </div>
             <div class="campo">
-                <label>Nudge (Baixar Texto mm)</label>
+                <label>Nudge (Baixar mm)</label>
                 <input type="number" id="nudge_mm" value="2" step="0.5">
             </div>
         </div>
 
         <button class="btn-imprimir" onclick="imprimir()">IMPRIMIR AGORA</button>
-        
-        <div style="margin-top: 20px; font-size: 0.7rem; color: #999;">
-            Galvão Drones - Goiânia, GO<br>
-            Suporte: (62) 3636-0668
-        </div>
     </div>
 
-    <!-- Container Fixo no Fundo da Página -->
     <div id="area-impressao"></div>
 
     <script>
@@ -269,21 +185,19 @@
                 const linha = document.createElement('div');
                 linha.className = 'linha-etiquetas';
                 linha.style.height = altura + 'mm';
-                // O padding-top faz o texto descer dentro da etiqueta (Nudge)
                 linha.style.paddingTop = nudge + 'mm';
 
                 for (let j = 0; j < 4; j++) {
                     linha.innerHTML += `
                         <div class="item">
-                            <img src="https://i.imgur.com/QGwrpcm.png" class="logo-etiqueta">
                             <span class="texto-os">OS ${os}</span>
+                            <img src="https://i.imgur.com/QGwrpcm.png" class="logo-etiqueta">
                         </div>
                     `;
                 }
                 container.appendChild(linha);
             }
 
-            // Aguarda renderização e dispara impressão
             setTimeout(() => {
                 window.print();
             }, 300);
