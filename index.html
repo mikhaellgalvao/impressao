@@ -56,10 +56,9 @@
         h2 {
             color: var(--verde-escuro);
             margin-bottom: 25px;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 800;
+            letter-spacing: 1px;
         }
 
         .campo {
@@ -85,6 +84,12 @@
             text-align: center;
             font-weight: bold;
             color: var(--verde-escuro);
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--laranja);
         }
 
         /* Seletor de Cópias 1-8 */
@@ -127,9 +132,15 @@
             cursor: pointer;
             margin-top: 25px;
             box-shadow: 0 6px 0 #083a2f;
+            transition: all 0.1s;
         }
 
-        /* ÁREA DE IMPRESSÃO */
+        .btn-imprimir:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #083a2f;
+        }
+
+        /* ÁREA DE IMPRESSÃO - LOGICA BLINDADA */
         #area-impressao {
             display: none;
             width: 150mm;
@@ -143,61 +154,54 @@
             justify-content: center;
             box-sizing: border-box;
             page-break-inside: avoid;
-            height: 25mm; /* VALOR FIXO */
-            padding-top: 4mm; /* VALOR FIXO (NUDGE) */
+            height: 25mm; /* VALOR FIXO VALIDADO */
+            padding-top: 4mm; /* VALOR NUDGE VALIDADO */
         }
 
         .item {
             flex: 1;
             display: flex;
-            flex-direction: column; /* Texto e Logo juntos na vertical */
+            flex-direction: column; /* Texto em cima, Logo embaixo */
             align-items: center;
             justify-content: center;
             height: 100%;
         }
 
         .logo-etiqueta {
-            height: 16.7mm; /* AUMENTADO +15% SOBRE OS 14.5mm */
+            height: 9mm;
             width: auto;
-            margin-top: 0;
+            margin-top: 1mm;
         }
 
         .texto-os {
-            font-size: 27pt; 
+            font-size: 27pt; /* REDUZIDO 10% */
             font-weight: bold;
             color: #000;
             margin: 0;
-            line-height: 0.8;
+            line-height: 0.85;
         }
 
-        /* AJUSTE PARA IMPRESSORA - CORREÇÃO DA PÁGINA EXTRA */
+        /* CSS EXCLUSIVO PARA IMPRESSÃO - PREVENTING 2ND PAGE */
         @media print {
-            body {
-                background: white !important;
-                height: 297mm;
-                overflow: hidden;
+            body { 
+                background: white !important; 
+                height: 297mm; 
+                overflow: hidden; 
             }
-            
-            #painel-controle {
-                display: none !important;
+            #painel-controle { 
+                display: none !important; 
             }
-
-            #area-impressao {
+            #area-impressao { 
                 display: flex !important; 
-                flex-direction: column;
-                justify-content: flex-end; /* Empurra tudo para o rodapé */
-                height: 297mm;
+                flex-direction: column-reverse; 
                 position: absolute;
-                top: 0;
+                bottom: 0;
                 left: 0;
                 width: 150mm;
+                height: auto;
             }
-
-            /* Forçar que cada bloco de 4 fique em uma única linha sem quebras */
-            .linha-etiquetas {
-                display: flex !important;
-                break-inside: avoid;
-            }
+            /* Esconde qualquer lixo visual */
+            * { -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -205,12 +209,11 @@
 
     <div id="painel-controle">
         <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" class="logo-main">
-        
-        <h2>Gerador de Etiquetas</h2>
+        <h2>Painel de O.S.</h2>
         
         <div class="campo">
             <label>Número da Ordem de Serviço</label>
-            <input type="text" id="os_num" placeholder="0000" autofocus>
+            <input type="text" id="os_num" placeholder="Ex: 1602" autofocus>
         </div>
 
         <div class="campo">
@@ -229,12 +232,13 @@
 
         <button class="btn-imprimir" onclick="imprimir()">IMPRIMIR AGORA</button>
         
-        <div style="margin-top: 25px; font-size: 0.75rem; color: #888; font-weight: bold;">
-            GOIÂNIA - GO | (62) 3636-0668<br>
-            Ajustes Fixos: 25mm / 4mm
+        <div style="margin-top: 25px; font-size: 0.75rem; color: #777;">
+            Galvão Drones - Tecnologia DJI em Goiânia<br>
+            Ajustes Fixos: 25mm / Nudge: 4mm
         </div>
     </div>
 
+    <!-- Área de Impressão (Só aparece no Print) -->
     <div id="area-impressao"></div>
 
     <script>
@@ -250,7 +254,6 @@
 
             container.innerHTML = '';
 
-            // Geramos os blocos de 4
             for (let i = 0; i < copias; i++) {
                 const linha = document.createElement('div');
                 linha.className = 'linha-etiquetas';
@@ -266,9 +269,10 @@
                 container.appendChild(linha);
             }
 
+            // Pequeno delay para processar o DOM antes do Print
             setTimeout(() => {
                 window.print();
-            }, 350);
+            }, 250);
         }
     </script>
 </body>
