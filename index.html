@@ -13,10 +13,10 @@
             --cinza-claro: #f4f7f6;
         }
 
-        /* CONFIGURAÇÃO DE IMPRESSÃO */
+        /* CONFIGURAÇÃO DE IMPRESSÃO - FORMATO DE ROLO/ETIQUETA */
         @page {
-            size: 150mm 297mm;
-            margin: 0;
+            size: 150mm 297mm; /* Define o tamanho exato da folha */
+            margin: 0; /* Remove margens do navegador */
         }
 
         html, body {
@@ -92,7 +92,7 @@
             border-color: var(--laranja);
         }
 
-        /* Seletor de Cópias 1-8 */
+        /* Seletor de Cópias */
         .grid-copias {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -140,7 +140,7 @@
             box-shadow: 0 2px 0 #083a2f;
         }
 
-        /* ÁREA DE IMPRESSÃO - LOGICA BLINDADA */
+        /* ÁREA DE IMPRESSÃO */
         #area-impressao {
             display: none;
             width: 150mm;
@@ -154,53 +154,61 @@
             justify-content: center;
             box-sizing: border-box;
             page-break-inside: avoid;
-            height: 25mm; /* VALOR FIXO VALIDADO */
-            padding-top: 4mm; /* VALOR NUDGE VALIDADO */
+            height: 25mm; 
+            padding-top: 4mm;
         }
 
         .item {
             flex: 1;
             display: flex;
-            flex-direction: column; /* Texto em cima, Logo embaixo */
+            flex-direction: column; 
             align-items: center;
             justify-content: center;
             height: 100%;
+            overflow: hidden; /* Garante que nada vaze do quadrado */
         }
 
         .logo-etiqueta {
-            height: 9.6mm; /* AUMENTADO EM 20% (DE 8mm PARA 9.6mm) */
-            width: auto;
+            /* MUDANÇA PRINCIPAL: Controle por largura para casar com o texto */
+            width: 85%; 
+            height: auto; 
+            max-height: 12mm; /* Trava de segurança para não invadir a linha de baixo */
             margin-top: 1mm;
+            object-fit: contain;
         }
 
         .texto-os {
-            font-size: 23pt; /* MANTIDO REDUZIDO */
+            font-size: 23pt; 
             font-weight: bold;
             color: #000;
             margin: 0;
             line-height: 0.85;
+            white-space: nowrap; /* Evita quebra de linha indesejada */
         }
 
-        /* CSS EXCLUSIVO PARA IMPRESSÃO - PREVENTING 2ND PAGE */
+        /* CSS EXCLUSIVO PARA IMPRESSÃO - ANTI-PÁGINA BRANCA */
         @media print {
-            body { 
+            html, body { 
                 background: white !important; 
-                height: 297mm; 
-                overflow: hidden; 
+                height: 100%; /* Força a altura exata */
+                overflow: hidden !important; /* Corta qualquer excesso que gere nova página */
+                margin: 0 !important;
+                padding: 0 !important;
             }
             #painel-controle { 
                 display: none !important; 
             }
             #area-impressao { 
                 display: flex !important; 
-                flex-direction: column-reverse; 
+                flex-direction: column-reverse; /* Mantém a lógica de imprimir de baixo para cima se necessário, ou ajuste para column se preferir topo */
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 width: 150mm;
-                height: auto;
+                height: auto; /* Deixa a altura se ajustar ao conteúdo */
+                max-height: 297mm; /* Garante que não passe de uma folha A4 */
+                overflow: hidden;
             }
-            /* Esconde qualquer lixo visual */
             * { -webkit-print-color-adjust: exact; }
         }
     </style>
