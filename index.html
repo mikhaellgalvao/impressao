@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galvão Drones - Impressão Técnica</title>
     <style>
-        /* Paleta Galvão Drones */
         :root {
             --laranja: #EF7E13;
             --verde-escuro: #0E5847;
@@ -13,7 +12,6 @@
             --bg-interface: #f0f2f5;
         }
 
-        /* CONFIGURAÇÃO DE IMPRESSÃO */
         @page {
             size: 150mm 297mm;
             margin: 0;
@@ -31,7 +29,7 @@
             min-height: 100vh;
         }
 
-        /* Interface de Controle (Não sai no Print) */
+        /* Interface de Controle */
         #painel-controle {
             max-width: 500px;
             margin: 20px auto;
@@ -43,93 +41,47 @@
             text-align: center;
         }
 
-        .logo-ui {
-            width: 160px;
-            margin-bottom: 10px;
-        }
+        .logo-ui { width: 160px; margin-bottom: 10px; }
+        h2 { color: var(--verde-escuro); margin: 0 0 20px 0; text-transform: uppercase; font-size: 1.4rem; }
 
-        h2 {
-            color: var(--verde-escuro);
-            margin: 0 0 20px 0;
-            font-size: 1.4rem;
-            text-transform: uppercase;
-        }
-
-        .campo {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            color: #444;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
+        .campo { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-weight: bold; color: #444; margin-bottom: 5px; font-size: 0.85rem; }
 
         input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--verde-escuro);
+            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px;
+            box-sizing: border-box; font-size: 1.2rem; font-weight: bold; color: var(--verde-escuro);
         }
 
-        /* Seletor de Cópias 1-8 */
-        .grid-copias {
+        /* Seletor de Cópias */
+        .grid-copias { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .opcao-copia input { position: absolute; opacity: 0; cursor: pointer; }
+        .opcao-copia label { display: block; padding: 10px 0; background: #eee; border-radius: 6px; text-align: center; cursor: pointer; font-weight: bold; }
+        .opcao-copia input:checked + label { background: var(--verde-escuro); color: white; border-color: var(--laranja); }
+
+        /* Ajustes Finos */
+        .ajustes-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-
-        .opcao-copia input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .opcao-copia label {
-            display: block;
-            padding: 10px 0;
-            background: #eee;
-            border-radius: 6px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: bold;
-            border: 2px solid transparent;
-        }
-
-        .opcao-copia input:checked + label {
-            background: var(--verde-escuro);
-            color: white;
-            border-color: var(--laranja);
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
         }
 
         .btn-imprimir {
-            background-color: var(--verde-escuro);
-            color: white;
-            border: none;
-            padding: 18px;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
-            box-shadow: 0 4px 0 #063d31;
+            background-color: var(--verde-escuro); color: white; border: none; padding: 18px;
+            border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer; width: 100%;
+            margin-top: 15px; box-shadow: 0 4px 0 #063d31;
         }
 
-        /* ESTRUTURA DE IMPRESSÃO - CORRIGIDA */
+        /* ESTRUTURA DE IMPRESSÃO */
         #area-impressao {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 150mm;
-            display: none; /* Escondido na tela */
+            display: none;
             flex-direction: column-reverse;
             background: white;
         }
@@ -137,8 +89,7 @@
         .linha-etiquetas {
             width: 150mm;
             display: flex;
-            height: 28mm; /* Ajustado para dar folga */
-            align-items: center;
+            align-items: center; /* Centraliza verticalmente o conteúdo da linha */
         }
 
         .item {
@@ -146,32 +97,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 10px;
         }
 
-        .logo-etiqueta {
-            height: 10mm;
-            width: auto;
-        }
+        .logo-etiqueta { height: 10mm; width: auto; }
+        .numero-os { font-size: 30pt; font-weight: bold; color: #000; margin: 0; line-height: 1; }
 
-        .numero-os {
-            font-size: 30pt;
-            font-weight: bold;
-            color: #000;
-        }
-
-        /* AJUSTE PARA O PRINT FINAL */
         @media print {
-            #painel-controle {
-                display: none !important;
-            }
-            body, html {
-                height: auto !important;
-                background: white;
-            }
-            #area-impressao {
-                display: flex !important;
-            }
+            #painel-controle { display: none !important; }
+            body, html { height: 100% !important; overflow: hidden; background: white; }
+            #area-impressao { display: flex !important; }
         }
     </style>
 </head>
@@ -179,15 +114,15 @@
 
     <div id="painel-controle">
         <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" class="logo-ui">
-        <h2>Gerador de O.S.</h2>
+        <h2>Painel de Impressão</h2>
         
         <div class="campo">
-            <label for="os">Número da O.S.</label>
-            <input type="text" id="os" placeholder="0000" autofocus maxlength="8">
+            <label>Número da O.S.</label>
+            <input type="text" id="os" placeholder="1602" autofocus>
         </div>
 
         <div class="campo">
-            <label>Quantidade de cópias (Linhas de 4):</label>
+            <label>Quantidade de Linhas (4 etiquetas cada):</label>
             <div class="grid-copias">
                 <div class="opcao-copia"><input type="radio" name="copias" id="c1" value="1" checked><label for="c1">1</label></div>
                 <div class="opcao-copia"><input type="radio" name="copias" id="c2" value="2"><label for="c2">2</label></div>
@@ -200,11 +135,15 @@
             </div>
         </div>
 
-        <!-- NOVO: Ajuste fino de margem inferior -->
-        <div class="campo">
-            <label for="margem">Ajuste de Altura (Margem inferior em mm):</label>
-            <input type="number" id="margem" value="0" step="1" placeholder="Ex: 5 ou -5">
-            <small style="color: #666;">Aumente se estiver muito alto, diminua se estiver muito baixo.</small>
+        <div class="ajustes-container">
+            <div class="campo">
+                <label>Altura da Etiqueta (mm)</label>
+                <input type="number" id="alt_etiqueta" value="25" step="0.5">
+            </div>
+            <div class="campo">
+                <label>Nudge (Baixar Texto mm)</label>
+                <input type="number" id="nudge" value="2" step="0.5">
+            </div>
         </div>
 
         <button class="btn-imprimir" onclick="gerarEImprimir()">IMPRIMIR AGORA</button>
@@ -216,21 +155,25 @@
         function gerarEImprimir() {
             const os = document.getElementById('os').value;
             const copias = document.querySelector('input[name="copias"]:checked').value;
-            const margem = document.getElementById('margem').value || 0;
+            const altura = document.getElementById('alt_etiqueta').value || 25;
+            const nudge = document.getElementById('nudge').value || 0;
             const container = document.getElementById('area-impressao');
 
             if (!os) {
-                alert("Por favor, digite o número da O.S.");
+                alert("Digite o número da O.S.");
                 return;
             }
 
             container.innerHTML = '';
-            // Aplica o ajuste de margem dinamicamente
-            container.style.paddingBottom = margem + 'mm';
 
             for (let i = 0; i < copias; i++) {
                 const linha = document.createElement('div');
                 linha.className = 'linha-etiquetas';
+                linha.style.height = altura + 'mm';
+                
+                // O padding-top faz o "Nudge" (empurra o texto para baixo dentro da etiqueta)
+                linha.style.paddingTop = nudge + 'mm';
+
                 for (let j = 0; j < 4; j++) {
                     linha.innerHTML += `
                         <div class="item">
