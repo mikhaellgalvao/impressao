@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galvão Drones - Impressão de O.S.</title>
+    <style>
+        /* Paleta Galvão Drones */
+        :root {
+            --laranja: #EF7E13;
+            --verde-escuro: #0E5847;
+            --branco: #ffffff;
+            --bg-interface: #f0f2f5;
+        }
+
+        /* Configurações de Página para Impressão */
+        @page {
+            size: 150mm auto;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-interface);
+        }
+
+        /* Interface de Controle (Não sai na impressão) */
+        #painel-controle {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 25px;
+            background: var(--branco);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-top: 8px solid var(--laranja);
+            text-align: center;
+        }
+
+        .logo-ui {
+            width: 180px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            color: var(--verde-escuro);
+            margin-top: 0;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .campo {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--laranja);
+        }
+
+        /* Grade de Seleção de Cópias */
+        .grid-copias {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .opcao-copia {
+            position: relative;
+        }
+
+        .opcao-copia input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .opcao-copia label {
+            display: block;
+            padding: 10px;
+            background: #eee;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            margin-bottom: 0;
+        }
+
+        .opcao-copia input[type="radio"]:checked + label {
+            background: var(--verde-escuro);
+            color: white;
+            border-color: var(--laranja);
+        }
+
+        button {
+            background-color: var(--verde-escuro);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 0 #083a2f;
+            transition: all 0.1s;
+        }
+
+        button:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #083a2f;
+        }
+
+        button:hover {
+            background-color: #126d58;
+        }
+
+        /* Área de Impressão */
+        #area-impressao {
+            width: 150mm;
+            margin: 0 auto;
+            background: white;
+        }
+
+        .linha-etiquetas {
+            width: 150mm;
+            display: flex;
+            margin-bottom: 10px;
+            page-break-inside: avoid;
+        }
+
+        .item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            gap: 8px;
+            border: 0.5px dashed #eee; /* Guia quase invisível para corte */
+        }
+
+        .logo-etiqueta {
+            height: 30px;
+            width: auto;
+        }
+
+        .numero-os {
+            font-size: 30pt;
+            font-weight: bold;
+            color: #000;
+            line-height: 1;
+        }
+
+        /* Esconder UI na hora de imprimir */
+        @media print {
+            #painel-controle {
+                display: none;
+            }
+            body {
+                background: white;
+            }
+            .item {
+                border: none;
+            }
+            .linha-etiquetas {
+                margin-bottom: 15px; /* Espaço para o corte na impressão */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="painel-controle">
+        <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" class="logo-ui">
+        <h2>Sistema de Etiquetas</h2>
+        
+        <div class="campo">
+            <label for="os">Número da O.S.</label>
+            <input type="text" id="os" placeholder="Digite a O.S." autofocus maxlength="10">
+        </div>
+
+        <div class="campo">
+            <label>Quantidade de Blocos (Cada bloco tem 4 etiquetas):</label>
+            <div class="grid-copias">
+                <!-- Gerando os botões de 1 a 8 -->
+                <div class="opcao-copia"><input type="radio" name="copias" id="c1" value="1" checked><label for="c1">1</label></div>
+                <div class="opcao-copia"><input type="radio" name="copias" id="c2" value="2"><label for="c2">2</label></div>
+                <div class="opcao-copia"><input type="radio" name="copias" id="c3" value="3"><label for="c3">3</label></div>
+                <div class="opcao-copia"><input type="radio" name="copias" id="c4" value="4"><label for="c4">4</label></div>
+                <div class="opcao-copia"><input type="radio" name="copias" id="c5" value="5"><label for="c5">5</label></div>
+                <div class="opcao-copia"><input type="radio" name="copias" id="c6" value="6"><label for="c6">6</label></div>
+                <div class="opcao-copia"><input type="radio" name="copias" id="c7" value="7"><label for="c7">7</label></div>
+                <div class="opcao-copia"><input type="radio" name="copias" id="c8" value="8"><label for="c8">8</label></div>
+            </div>
+        </div>
+
+        <button onclick="imprimir()">GERAR E IMPRIMIR</button>
+    </div>
+
+    <div id="area-impressao"></div>
+
+    <script>
+        function imprimir() {
+            const os = document.getElementById('os').value;
+            // Pega o valor do rádio selecionado
+            const copias = document.querySelector('input[name="copias"]:checked').value;
+            const container = document.getElementById('area-impressao');
+
+            if (!os) {
+                alert("Por favor, insira o número da O.S.");
+                return;
+            }
+
+            container.innerHTML = '';
+
+            for (let i = 0; i < copias; i++) {
+                const linha = document.createElement('div');
+                linha.className = 'linha-etiquetas';
+
+                for (let j = 0; j < 4; j++) {
+                    linha.innerHTML += `
+                        <div class="item">
+                            <img src="https://i.imgur.com/DnGmGYd.jpeg">
+                            <span class="numero-os">${os}</span>
+                        </div>
+                    `;
+                }
+                container.appendChild(linha);
+            }
+
+            // Aguarda o carregamento da imagem e abre a impressão
+            setTimeout(() => {
+                window.print();
+            }, 400);
+        }
+    </script>
+
+</body>
+</html>
