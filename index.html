@@ -15,7 +15,7 @@
 
         /* CONFIGURAÇÃO DE IMPRESSÃO */
         @page {
-            size: 150mm 297mm;
+            size: 150mm auto; /* Altura automática para evitar páginas extras */
             margin: 0;
         }
 
@@ -48,10 +48,9 @@
             text-align: center;
         }
 
-        /* Logo SVG para ser sem fundo e nítida */
-        .logo-container-ui {
-            width: 220px;
-            margin: 0 auto 20px auto;
+        .logo-main {
+            width: 160px;
+            margin-bottom: 15px;
         }
 
         h2 {
@@ -157,7 +156,7 @@
             box-sizing: border-box;
             page-break-inside: avoid;
             height: 25mm; /* VALOR FIXO */
-            padding-top: 4mm; /* VALOR FIXO */
+            padding-top: 4mm; /* VALOR FIXO (NUDGE) */
         }
 
         .item {
@@ -170,7 +169,7 @@
         }
 
         .logo-etiqueta {
-            height: 10.8mm; /* AUMENTADO EM 20% (Era 9mm) */
+            height: 12.5mm; /* AUMENTADO EM +15% (Era 10.8mm) */
             width: auto;
             margin-top: 1mm;
         }
@@ -183,24 +182,36 @@
             line-height: 0.85;
         }
 
-        /* AJUSTE PARA IMPRESSORA BROTHER */
+        /* AJUSTE PARA IMPRESSORA BROTHER - CORREÇÃO PÁGINA EM BRANCO */
         @media print {
-            body { 
-                background: white !important; 
-                height: 297mm; 
-                overflow: hidden; 
+            html, body {
+                height: auto !important; /* Permite altura automática */
+                min-height: 0 !important; /* Remove altura mínima */
+                background: white !important;
+                overflow: visible !important; /* Permite que o conteúdo seja visto */
             }
-            #painel-controle { 
-                display: none !important; 
+            
+            /* Esconde tudo na página */
+            body * {
+                visibility: hidden;
+                height: 0; /* Remove altura de elementos escondidos */
             }
-            #area-impressao { 
+
+            /* Mostra apenas o container de impressão e seu conteúdo */
+            #area-impressao, #area-impressao * {
+                visibility: visible;
+                height: auto; /* Restaura altura automática para o conteúdo */
+            }
+
+            #area-impressao {
                 display: flex !important; 
                 flex-direction: column-reverse; 
-                position: absolute;
+                position: fixed; /* Fixa no rodapé da página */
                 bottom: 0;
                 left: 0;
                 width: 150mm;
-                height: auto;
+                background: white;
+                z-index: 9999; /* Garante que fique por cima */
             }
         }
     </style>
@@ -208,20 +219,8 @@
 <body>
 
     <div id="painel-controle">
-        <!-- Logo GD GALVÃO DRONES Sem Fundo (SVG) -->
-        <div class="logo-container-ui">
-            <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:#0E5847;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#EF7E13;stop-opacity:1" />
-                    </linearGradient>
-                </defs>
-                <text x="50%" y="50" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="65" fill="#0E5847">GD</text>
-                <text x="50%" y="100" text-anchor="middle" font-family="Arial Narrow, sans-serif" font-size="28" font-weight="bold" fill="#EF7E13" letter-spacing="4">GALVÃO DRONES</text>
-                <rect x="145" y="65" width="110" height="4" fill="#EF7E13" />
-            </svg>
-        </div>
+        <!-- Logo Original (PNG) -->
+        <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" class="logo-main">
         
         <h2>Gerador de Etiquetas</h2>
         
