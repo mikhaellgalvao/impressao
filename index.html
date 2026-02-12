@@ -15,7 +15,7 @@
 
         /* CONFIGURAÇÃO DE IMPRESSÃO */
         @page {
-            size: 150mm auto; /* Altura automática para evitar páginas extras */
+            size: 150mm 297mm;
             margin: 0;
         }
 
@@ -155,8 +155,8 @@
             justify-content: center;
             box-sizing: border-box;
             page-break-inside: avoid;
-            height: 25mm; /* VALOR FIXO */
-            padding-top: 4mm; /* VALOR FIXO (NUDGE) */
+            height: 25mm; /* VALOR FIXO TRAVADO */
+            padding-top: 4mm; /* VALOR NUDGE TRAVADO */
         }
 
         .item {
@@ -169,7 +169,7 @@
         }
 
         .logo-etiqueta {
-            height: 12.5mm; /* AUMENTADO EM +15% (Era 10.8mm) */
+            height: 14.5mm; /* AUMENTADO MAIS 15% */
             width: auto;
             margin-top: 1mm;
         }
@@ -182,36 +182,27 @@
             line-height: 0.85;
         }
 
-        /* AJUSTE PARA IMPRESSORA BROTHER - CORREÇÃO PÁGINA EM BRANCO */
+        /* AJUSTE PARA IMPRESSORA - CORREÇÃO DEFINITIVA DA PÁGINA EM BRANCO */
         @media print {
-            html, body {
-                height: auto !important; /* Permite altura automática */
-                min-height: 0 !important; /* Remove altura mínima */
+            body {
                 background: white !important;
-                overflow: visible !important; /* Permite que o conteúdo seja visto */
+                height: auto !important;
             }
             
-            /* Esconde tudo na página */
-            body * {
-                visibility: hidden;
-                height: 0; /* Remove altura de elementos escondidos */
+            /* Esconde o painel de controle completamente para não ocupar espaço */
+            #painel-controle {
+                display: none !important;
             }
 
-            /* Mostra apenas o container de impressão e seu conteúdo */
-            #area-impressao, #area-impressao * {
-                visibility: visible;
-                height: auto; /* Restaura altura automática para o conteúdo */
-            }
-
+            /* Mostra o container de impressão fixado no fundo da página */
             #area-impressao {
                 display: flex !important; 
                 flex-direction: column-reverse; 
-                position: fixed; /* Fixa no rodapé da página */
+                position: absolute;
                 bottom: 0;
                 left: 0;
                 width: 150mm;
                 background: white;
-                z-index: 9999; /* Garante que fique por cima */
             }
         }
     </style>
@@ -219,7 +210,7 @@
 <body>
 
     <div id="painel-controle">
-        <!-- Logo Original (PNG) -->
+        <!-- Logo Principal Original (PNG) -->
         <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" class="logo-main">
         
         <h2>Gerador de Etiquetas</h2>
@@ -246,7 +237,8 @@
         <button class="btn-imprimir" onclick="imprimir()">IMPRIMIR AGORA</button>
         
         <div style="margin-top: 25px; font-size: 0.75rem; color: #888; font-weight: bold;">
-            GOIÂNIA - GO | (62) 3636-0668
+            GOIÂNIA - GO | (62) 3636-0668<br>
+            <span style="opacity: 0.5;">Configurações: 25mm / 4mm (Fixas)</span>
         </div>
     </div>
 
@@ -273,6 +265,7 @@
                     linha.innerHTML += `
                         <div class="item">
                             <span class="texto-os">OS ${os}</span>
+                            <!-- Logo da etiqueta solicitada -->
                             <img src="https://i.imgur.com/DnGmGYd.jpeg" class="logo-etiqueta">
                         </div>
                     `;
@@ -280,9 +273,10 @@
                 container.appendChild(linha);
             }
 
+            // Delay para garantir que o navegador processe o sumiço do painel
             setTimeout(() => {
                 window.print();
-            }, 250);
+            }, 300);
         }
     </script>
 </body>
