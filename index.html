@@ -15,7 +15,7 @@
 
         /* Configurações de Página para Impressão */
         @page {
-            size: 150mm auto;
+            size: 150mm 297mm;
             margin: 0;
         }
 
@@ -24,6 +24,7 @@
             margin: 0;
             padding: 0;
             background-color: var(--bg-interface);
+            width: 150mm;
         }
 
         /* Interface de Controle (Não sai na impressão) */
@@ -48,7 +49,6 @@
             margin-top: 0;
             font-size: 1.5rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .campo {
@@ -72,12 +72,6 @@
             font-size: 1.2rem;
             font-weight: bold;
             text-align: center;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--laranja);
         }
 
         /* Grade de Seleção de Cópias */
@@ -108,7 +102,6 @@
             font-weight: bold;
             border: 2px solid transparent;
             transition: all 0.2s;
-            margin-bottom: 0;
         }
 
         .opcao-copia input[type="radio"]:checked + label {
@@ -121,59 +114,51 @@
             background-color: var(--verde-escuro);
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 18px;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
             box-shadow: 0 4px 0 #083a2f;
-            transition: all 0.1s;
         }
 
         button:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #083a2f;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #083a2f;
         }
 
-        button:hover {
-            background-color: #126d58;
-        }
-
-        /* Área de Impressão */
-        #area-impressao {
+        /* ESTILO DA IMPRESSÃO - IGUAL AO SEU TESTE */
+        .rodape-impressao {
+            position: fixed;
+            bottom: 0;
+            left: 0;
             width: 150mm;
-            margin: 0 auto;
+            display: flex;
+            flex-direction: column; /* Para empilhar se houver mais de 1 cópia */
             background: white;
         }
 
         .linha-etiquetas {
-            width: 150mm;
             display: flex;
+            width: 150mm;
             margin-bottom: 10px;
-            page-break-inside: avoid;
         }
 
         .item {
             flex: 1;
+            text-align: center;
+            font-size: 30pt; /* Exatamente como no seu teste */
+            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 5px;
-            gap: 8px;
-            border: 0.5px dashed #eee; /* Guia quase invisível para corte */
+            gap: 10px;
         }
 
         .logo-etiqueta {
-            height: 30px;
+            height: 35px; /* Altura para alinhar com o texto de 30pt */
             width: auto;
-        }
-
-        .numero-os {
-            font-size: 30pt;
-            font-weight: bold;
-            color: #000;
-            line-height: 1;
         }
 
         /* Esconder UI na hora de imprimir */
@@ -184,12 +169,6 @@
             body {
                 background: white;
             }
-            .item {
-                border: none;
-            }
-            .linha-etiquetas {
-                margin-bottom: 15px; /* Espaço para o corte na impressão */
-            }
         }
     </style>
 </head>
@@ -197,17 +176,16 @@
 
     <div id="painel-controle">
         <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" class="logo-ui">
-        <h2>Sistema de Etiquetas</h2>
+        <h2>Etiquetas de O.S.</h2>
         
         <div class="campo">
-            <label for="os">Número da O.S.</label>
-            <input type="text" id="os" placeholder="Digite a O.S." autofocus maxlength="10">
+            <label for="os">Número da Ordem de Serviço</label>
+            <input type="text" id="os" placeholder="0000" autofocus>
         </div>
 
         <div class="campo">
-            <label>Quantidade de Blocos (Cada bloco tem 4 etiquetas):</label>
+            <label>Quantidade de Blocos (1 bloco = 4 etiquetas):</label>
             <div class="grid-copias">
-                <!-- Gerando os botões de 1 a 8 -->
                 <div class="opcao-copia"><input type="radio" name="copias" id="c1" value="1" checked><label for="c1">1</label></div>
                 <div class="opcao-copia"><input type="radio" name="copias" id="c2" value="2"><label for="c2">2</label></div>
                 <div class="opcao-copia"><input type="radio" name="copias" id="c3" value="3"><label for="c3">3</label></div>
@@ -219,44 +197,46 @@
             </div>
         </div>
 
-        <button onclick="imprimir()">GERAR E IMPRIMIR</button>
+        <button onclick="imprimir()">IMPRIMIR ETIQUETAS</button>
     </div>
 
-    <div id="area-impressao"></div>
+    <!-- Onde as etiquetas serão geradas -->
+    <div id="area-impressao" class="rodape-impressao"></div>
 
     <script>
         function imprimir() {
             const os = document.getElementById('os').value;
-            // Pega o valor do rádio selecionado
             const copias = document.querySelector('input[name="copias"]:checked').value;
             const container = document.getElementById('area-impressao');
 
             if (!os) {
-                alert("Por favor, insira o número da O.S.");
+                alert("Digite o número da O.S. antes de continuar.");
                 return;
             }
 
             container.innerHTML = '';
 
+            // Gera as linhas (blocos)
             for (let i = 0; i < copias; i++) {
                 const linha = document.createElement('div');
                 linha.className = 'linha-etiquetas';
 
+                // 4 etiquetas por linha
                 for (let j = 0; j < 4; j++) {
                     linha.innerHTML += `
                         <div class="item">
-                            <img src="https://i.imgur.com/DnGmGYd.jpeg">
-                            <span class="numero-os">${os}</span>
+                            <img src="https://i.imgur.com/DnGmGYd.jpeg" class="logo-etiqueta">
+                            <span>${os}</span>
                         </div>
                     `;
                 }
                 container.appendChild(linha);
             }
 
-            // Aguarda o carregamento da imagem e abre a impressão
+            // Aguarda a imagem carregar e chama a impressão
             setTimeout(() => {
                 window.print();
-            }, 400);
+            }, 350);
         }
     </script>
 
