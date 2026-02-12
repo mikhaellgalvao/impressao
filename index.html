@@ -13,7 +13,7 @@
             --bg-interface: #f0f2f5;
         }
 
-        /* CONFIGURAÇÃO DE IMPRESSÃO - CRITICAL */
+        /* CONFIGURAÇÃO DE IMPRESSÃO */
         @page {
             size: 150mm 297mm;
             margin: 0;
@@ -23,14 +23,16 @@
             margin: 0;
             padding: 0;
             width: 150mm;
-            height: 297mm;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Interface de Controle (Escondida no Print) */
+        body {
+            background-color: var(--bg-interface);
+            min-height: 100vh;
+        }
+
+        /* Interface de Controle (Não sai no Print) */
         #painel-controle {
-            position: relative;
-            z-index: 100;
             max-width: 500px;
             margin: 20px auto;
             padding: 25px;
@@ -54,7 +56,7 @@
         }
 
         .campo {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: left;
         }
 
@@ -62,19 +64,18 @@
             display: block;
             font-weight: bold;
             color: #444;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-size: 0.9rem;
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="number"] {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border: 2px solid #ddd;
             border-radius: 8px;
             box-sizing: border-box;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            text-align: center;
             color: var(--verde-escuro);
         }
 
@@ -85,10 +86,6 @@
             gap: 8px;
         }
 
-        .opcao-copia {
-            position: relative;
-        }
-
         .opcao-copia input {
             position: absolute;
             opacity: 0;
@@ -97,15 +94,13 @@
 
         .opcao-copia label {
             display: block;
-            padding: 12px 0;
+            padding: 10px 0;
             background: #eee;
             border-radius: 6px;
             text-align: center;
             cursor: pointer;
             font-weight: bold;
             border: 2px solid transparent;
-            margin-bottom: 0;
-            transition: 0.2s;
         }
 
         .opcao-copia input:checked + label {
@@ -124,30 +119,25 @@
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 15px;
             box-shadow: 0 4px 0 #063d31;
         }
 
-        .btn-imprimir:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #063d31;
-        }
-
-        /* ESTRUTURA DE IMPRESSÃO - IGUAL AO SEU SUCESSO */
+        /* ESTRUTURA DE IMPRESSÃO - CORRIGIDA */
         #area-impressao {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 150mm;
-            display: flex;
-            flex-direction: column-reverse; /* Faz as cópias subirem a partir do fundo */
-            padding-bottom: 10mm; /* Ajuste fino do recuo do fundo se necessário */
+            display: none; /* Escondido na tela */
+            flex-direction: column-reverse;
+            background: white;
         }
 
         .linha-etiquetas {
             width: 150mm;
             display: flex;
-            height: 25mm; /* Altura estimada da etiqueta na foto */
+            height: 28mm; /* Ajustado para dar folga */
             align-items: center;
         }
 
@@ -157,29 +147,27 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
-            overflow: hidden;
         }
 
         .logo-etiqueta {
-            height: 10mm; /* Proporção da logo na etiqueta */
+            height: 10mm;
             width: auto;
         }
 
         .numero-os {
-            font-size: 30pt; /* Tamanho exato do seu teste */
+            font-size: 30pt;
             font-weight: bold;
             color: #000;
-            margin: 0;
-            padding: 0;
         }
 
-        /* Esconder tudo que não é etiqueta no Print */
+        /* AJUSTE PARA O PRINT FINAL */
         @media print {
-            #painel-controle, .no-print {
+            #painel-controle {
                 display: none !important;
             }
-            body {
-                background: none;
+            body, html {
+                height: auto !important;
+                background: white;
             }
             #area-impressao {
                 display: flex !important;
@@ -189,7 +177,6 @@
 </head>
 <body>
 
-    <!-- Interface Visível -->
     <div id="painel-controle">
         <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" class="logo-ui">
         <h2>Gerador de O.S.</h2>
@@ -213,16 +200,23 @@
             </div>
         </div>
 
+        <!-- NOVO: Ajuste fino de margem inferior -->
+        <div class="campo">
+            <label for="margem">Ajuste de Altura (Margem inferior em mm):</label>
+            <input type="number" id="margem" value="0" step="1" placeholder="Ex: 5 ou -5">
+            <small style="color: #666;">Aumente se estiver muito alto, diminua se estiver muito baixo.</small>
+        </div>
+
         <button class="btn-imprimir" onclick="gerarEImprimir()">IMPRIMIR AGORA</button>
     </div>
 
-    <!-- Área Técnica de Impressão (Fixo no rodapé) -->
     <div id="area-impressao"></div>
 
     <script>
         function gerarEImprimir() {
             const os = document.getElementById('os').value;
             const copias = document.querySelector('input[name="copias"]:checked').value;
+            const margem = document.getElementById('margem').value || 0;
             const container = document.getElementById('area-impressao');
 
             if (!os) {
@@ -230,15 +224,13 @@
                 return;
             }
 
-            // Limpa antes de gerar novo
             container.innerHTML = '';
+            // Aplica o ajuste de margem dinamicamente
+            container.style.paddingBottom = margem + 'mm';
 
-            // Gera as linhas conforme selecionado
             for (let i = 0; i < copias; i++) {
                 const linha = document.createElement('div');
                 linha.className = 'linha-etiquetas';
-
-                // 4 etiquetas por linha
                 for (let j = 0; j < 4; j++) {
                     linha.innerHTML += `
                         <div class="item">
@@ -250,7 +242,6 @@
                 container.appendChild(linha);
             }
 
-            // Aguarda renderização e abre janela de impressão
             setTimeout(() => {
                 window.print();
             }, 300);
