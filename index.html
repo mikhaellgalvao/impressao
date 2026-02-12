@@ -48,17 +48,19 @@
             text-align: center;
         }
 
-        .logo-main {
-            width: 160px;
-            margin-bottom: 15px;
+        /* Logo SVG para ser sem fundo e nítida */
+        .logo-container-ui {
+            width: 220px;
+            margin: 0 auto 20px auto;
         }
 
         h2 {
             color: var(--verde-escuro);
             margin-bottom: 25px;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            font-weight: 800;
         }
 
         .campo {
@@ -140,7 +142,7 @@
             box-shadow: 0 2px 0 #083a2f;
         }
 
-        /* ÁREA DE IMPRESSÃO - LOGICA BLINDADA */
+        /* ÁREA DE IMPRESSÃO */
         #area-impressao {
             display: none;
             width: 150mm;
@@ -154,34 +156,34 @@
             justify-content: center;
             box-sizing: border-box;
             page-break-inside: avoid;
-            height: 25mm; /* VALOR FIXO VALIDADO */
-            padding-top: 4mm; /* VALOR NUDGE VALIDADO */
+            height: 25mm; /* VALOR FIXO */
+            padding-top: 4mm; /* VALOR FIXO */
         }
 
         .item {
             flex: 1;
             display: flex;
-            flex-direction: column; /* Texto em cima, Logo embaixo */
+            flex-direction: column; 
             align-items: center;
             justify-content: center;
             height: 100%;
         }
 
         .logo-etiqueta {
-            height: 9mm;
+            height: 10.8mm; /* AUMENTADO EM 20% (Era 9mm) */
             width: auto;
             margin-top: 1mm;
         }
 
         .texto-os {
-            font-size: 27pt; /* REDUZIDO 10% */
+            font-size: 27pt; 
             font-weight: bold;
             color: #000;
             margin: 0;
             line-height: 0.85;
         }
 
-        /* CSS EXCLUSIVO PARA IMPRESSÃO - PREVENTING 2ND PAGE */
+        /* AJUSTE PARA IMPRESSORA BROTHER */
         @media print {
             body { 
                 background: white !important; 
@@ -200,20 +202,32 @@
                 width: 150mm;
                 height: auto;
             }
-            /* Esconde qualquer lixo visual */
-            * { -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
 <body>
 
     <div id="painel-controle">
-        <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" class="logo-main">
-        <h2>Painel de O.S.</h2>
+        <!-- Logo GD GALVÃO DRONES Sem Fundo (SVG) -->
+        <div class="logo-container-ui">
+            <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#0E5847;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#EF7E13;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <text x="50%" y="50" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="65" fill="#0E5847">GD</text>
+                <text x="50%" y="100" text-anchor="middle" font-family="Arial Narrow, sans-serif" font-size="28" font-weight="bold" fill="#EF7E13" letter-spacing="4">GALVÃO DRONES</text>
+                <rect x="145" y="65" width="110" height="4" fill="#EF7E13" />
+            </svg>
+        </div>
+        
+        <h2>Gerador de Etiquetas</h2>
         
         <div class="campo">
             <label>Número da Ordem de Serviço</label>
-            <input type="text" id="os_num" placeholder="Ex: 1602" autofocus>
+            <input type="text" id="os_num" placeholder="0000" autofocus>
         </div>
 
         <div class="campo">
@@ -232,13 +246,11 @@
 
         <button class="btn-imprimir" onclick="imprimir()">IMPRIMIR AGORA</button>
         
-        <div style="margin-top: 25px; font-size: 0.75rem; color: #777;">
-            Galvão Drones - Tecnologia DJI em Goiânia<br>
-            Ajustes Fixos: 25mm / Nudge: 4mm
+        <div style="margin-top: 25px; font-size: 0.75rem; color: #888; font-weight: bold;">
+            GOIÂNIA - GO | (62) 3636-0668
         </div>
     </div>
 
-    <!-- Área de Impressão (Só aparece no Print) -->
     <div id="area-impressao"></div>
 
     <script>
@@ -269,7 +281,6 @@
                 container.appendChild(linha);
             }
 
-            // Pequeno delay para processar o DOM antes do Print
             setTimeout(() => {
                 window.print();
             }, 250);
