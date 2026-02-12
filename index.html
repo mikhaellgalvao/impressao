@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galvão Drones - Impressão de O.S.</title>
+    <title>Galvão Drones - Impressão Técnica</title>
     <style>
         /* Paleta Galvão Drones */
         :root {
@@ -13,24 +13,26 @@
             --bg-interface: #f0f2f5;
         }
 
-        /* Configurações de Página para Impressão */
+        /* CONFIGURAÇÃO DE IMPRESSÃO - CRITICAL */
         @page {
             size: 150mm 297mm;
             margin: 0;
         }
 
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        html, body {
             margin: 0;
             padding: 0;
-            background-color: var(--bg-interface);
             width: 150mm;
+            height: 297mm;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Interface de Controle (Não sai na impressão) */
+        /* Interface de Controle (Escondida no Print) */
         #painel-controle {
+            position: relative;
+            z-index: 100;
             max-width: 500px;
-            margin: 30px auto;
+            margin: 20px auto;
             padding: 25px;
             background: var(--branco);
             border-radius: 12px;
@@ -40,14 +42,14 @@
         }
 
         .logo-ui {
-            width: 180px;
-            margin-bottom: 15px;
+            width: 160px;
+            margin-bottom: 10px;
         }
 
         h2 {
             color: var(--verde-escuro);
-            margin-top: 0;
-            font-size: 1.5rem;
+            margin: 0 0 20px 0;
+            font-size: 1.4rem;
             text-transform: uppercase;
         }
 
@@ -60,7 +62,8 @@
             display: block;
             font-weight: bold;
             color: #444;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
         }
 
         input[type="text"] {
@@ -69,24 +72,24 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             box-sizing: border-box;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: bold;
             text-align: center;
+            color: var(--verde-escuro);
         }
 
-        /* Grade de Seleção de Cópias */
+        /* Seletor de Cópias 1-8 */
         .grid-copias {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
         }
 
         .opcao-copia {
             position: relative;
         }
 
-        .opcao-copia input[type="radio"] {
+        .opcao-copia input {
             position: absolute;
             opacity: 0;
             cursor: pointer;
@@ -94,23 +97,24 @@
 
         .opcao-copia label {
             display: block;
-            padding: 10px;
+            padding: 12px 0;
             background: #eee;
             border-radius: 6px;
             text-align: center;
             cursor: pointer;
             font-weight: bold;
             border: 2px solid transparent;
-            transition: all 0.2s;
+            margin-bottom: 0;
+            transition: 0.2s;
         }
 
-        .opcao-copia input[type="radio"]:checked + label {
+        .opcao-copia input:checked + label {
             background: var(--verde-escuro);
             color: white;
             border-color: var(--laranja);
         }
 
-        button {
+        .btn-imprimir {
             background-color: var(--verde-escuro);
             color: white;
             border: none;
@@ -120,71 +124,83 @@
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 4px 0 #083a2f;
+            margin-top: 10px;
+            box-shadow: 0 4px 0 #063d31;
         }
 
-        button:active {
+        .btn-imprimir:active {
             transform: translateY(2px);
-            box-shadow: 0 2px 0 #083a2f;
+            box-shadow: 0 2px 0 #063d31;
         }
 
-        /* ESTILO DA IMPRESSÃO - IGUAL AO SEU TESTE */
-        .rodape-impressao {
+        /* ESTRUTURA DE IMPRESSÃO - IGUAL AO SEU SUCESSO */
+        #area-impressao {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 150mm;
             display: flex;
-            flex-direction: column; /* Para empilhar se houver mais de 1 cópia */
-            background: white;
+            flex-direction: column-reverse; /* Faz as cópias subirem a partir do fundo */
+            padding-bottom: 10mm; /* Ajuste fino do recuo do fundo se necessário */
         }
 
         .linha-etiquetas {
-            display: flex;
             width: 150mm;
-            margin-bottom: 10px;
+            display: flex;
+            height: 25mm; /* Altura estimada da etiqueta na foto */
+            align-items: center;
         }
 
         .item {
             flex: 1;
-            text-align: center;
-            font-size: 30pt; /* Exatamente como no seu teste */
-            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 5px;
+            overflow: hidden;
         }
 
         .logo-etiqueta {
-            height: 35px; /* Altura para alinhar com o texto de 30pt */
+            height: 10mm; /* Proporção da logo na etiqueta */
             width: auto;
         }
 
-        /* Esconder UI na hora de imprimir */
+        .numero-os {
+            font-size: 30pt; /* Tamanho exato do seu teste */
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Esconder tudo que não é etiqueta no Print */
         @media print {
-            #painel-controle {
-                display: none;
+            #painel-controle, .no-print {
+                display: none !important;
             }
             body {
-                background: white;
+                background: none;
+            }
+            #area-impressao {
+                display: flex !important;
             }
         }
     </style>
 </head>
 <body>
 
+    <!-- Interface Visível -->
     <div id="painel-controle">
         <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" class="logo-ui">
-        <h2>Etiquetas de O.S.</h2>
+        <h2>Gerador de O.S.</h2>
         
         <div class="campo">
-            <label for="os">Número da Ordem de Serviço</label>
-            <input type="text" id="os" placeholder="0000" autofocus>
+            <label for="os">Número da O.S.</label>
+            <input type="text" id="os" placeholder="0000" autofocus maxlength="8">
         </div>
 
         <div class="campo">
-            <label>Quantidade de Blocos (1 bloco = 4 etiquetas):</label>
+            <label>Quantidade de cópias (Linhas de 4):</label>
             <div class="grid-copias">
                 <div class="opcao-copia"><input type="radio" name="copias" id="c1" value="1" checked><label for="c1">1</label></div>
                 <div class="opcao-copia"><input type="radio" name="copias" id="c2" value="2"><label for="c2">2</label></div>
@@ -197,26 +213,27 @@
             </div>
         </div>
 
-        <button onclick="imprimir()">IMPRIMIR ETIQUETAS</button>
+        <button class="btn-imprimir" onclick="gerarEImprimir()">IMPRIMIR AGORA</button>
     </div>
 
-    <!-- Onde as etiquetas serão geradas -->
-    <div id="area-impressao" class="rodape-impressao"></div>
+    <!-- Área Técnica de Impressão (Fixo no rodapé) -->
+    <div id="area-impressao"></div>
 
     <script>
-        function imprimir() {
+        function gerarEImprimir() {
             const os = document.getElementById('os').value;
             const copias = document.querySelector('input[name="copias"]:checked').value;
             const container = document.getElementById('area-impressao');
 
             if (!os) {
-                alert("Digite o número da O.S. antes de continuar.");
+                alert("Por favor, digite o número da O.S.");
                 return;
             }
 
+            // Limpa antes de gerar novo
             container.innerHTML = '';
 
-            // Gera as linhas (blocos)
+            // Gera as linhas conforme selecionado
             for (let i = 0; i < copias; i++) {
                 const linha = document.createElement('div');
                 linha.className = 'linha-etiquetas';
@@ -225,20 +242,19 @@
                 for (let j = 0; j < 4; j++) {
                     linha.innerHTML += `
                         <div class="item">
-                            <img src="https://i.imgur.com/DnGmGYd.jpeg" class="logo-etiqueta">
-                            <span>${os}</span>
+                            <img src="https://i.imgur.com/QGwrpcm.png" class="logo-etiqueta">
+                            <span class="numero-os">${os}</span>
                         </div>
                     `;
                 }
                 container.appendChild(linha);
             }
 
-            // Aguarda a imagem carregar e chama a impressão
+            // Aguarda renderização e abre janela de impressão
             setTimeout(() => {
                 window.print();
-            }, 350);
+            }, 300);
         }
     </script>
-
 </body>
 </html>
