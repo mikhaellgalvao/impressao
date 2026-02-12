@@ -85,12 +85,6 @@
             text-align: center;
             font-weight: bold;
             color: var(--verde-escuro);
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--laranja);
         }
 
         /* Seletor de Cópias 1-8 */
@@ -133,12 +127,6 @@
             cursor: pointer;
             margin-top: 25px;
             box-shadow: 0 6px 0 #083a2f;
-            transition: all 0.1s;
-        }
-
-        .btn-imprimir:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 #083a2f;
         }
 
         /* ÁREA DE IMPRESSÃO */
@@ -155,23 +143,23 @@
             justify-content: center;
             box-sizing: border-box;
             page-break-inside: avoid;
-            height: 25mm; /* VALOR FIXO TRAVADO */
-            padding-top: 4mm; /* VALOR NUDGE TRAVADO */
+            height: 25mm; /* VALOR FIXO */
+            padding-top: 4mm; /* VALOR FIXO (NUDGE) */
         }
 
         .item {
             flex: 1;
             display: flex;
-            flex-direction: column; 
+            flex-direction: column; /* Texto e Logo juntos na vertical */
             align-items: center;
             justify-content: center;
             height: 100%;
         }
 
         .logo-etiqueta {
-            height: 14.5mm; /* AUMENTADO MAIS 15% */
+            height: 16.7mm; /* AUMENTADO +15% SOBRE OS 14.5mm */
             width: auto;
-            margin-top: 1mm;
+            margin-top: 0;
         }
 
         .texto-os {
@@ -179,30 +167,36 @@
             font-weight: bold;
             color: #000;
             margin: 0;
-            line-height: 0.85;
+            line-height: 0.8;
         }
 
-        /* AJUSTE PARA IMPRESSORA - CORREÇÃO DEFINITIVA DA PÁGINA EM BRANCO */
+        /* AJUSTE PARA IMPRESSORA - CORREÇÃO DA PÁGINA EXTRA */
         @media print {
             body {
                 background: white !important;
-                height: auto !important;
+                height: 297mm;
+                overflow: hidden;
             }
             
-            /* Esconde o painel de controle completamente para não ocupar espaço */
             #painel-controle {
                 display: none !important;
             }
 
-            /* Mostra o container de impressão fixado no fundo da página */
             #area-impressao {
                 display: flex !important; 
-                flex-direction: column-reverse; 
+                flex-direction: column;
+                justify-content: flex-end; /* Empurra tudo para o rodapé */
+                height: 297mm;
                 position: absolute;
-                bottom: 0;
+                top: 0;
                 left: 0;
                 width: 150mm;
-                background: white;
+            }
+
+            /* Forçar que cada bloco de 4 fique em uma única linha sem quebras */
+            .linha-etiquetas {
+                display: flex !important;
+                break-inside: avoid;
             }
         }
     </style>
@@ -210,7 +204,6 @@
 <body>
 
     <div id="painel-controle">
-        <!-- Logo Principal Original (PNG) -->
         <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" class="logo-main">
         
         <h2>Gerador de Etiquetas</h2>
@@ -238,7 +231,7 @@
         
         <div style="margin-top: 25px; font-size: 0.75rem; color: #888; font-weight: bold;">
             GOIÂNIA - GO | (62) 3636-0668<br>
-            <span style="opacity: 0.5;">Configurações: 25mm / 4mm (Fixas)</span>
+            Ajustes Fixos: 25mm / 4mm
         </div>
     </div>
 
@@ -257,6 +250,7 @@
 
             container.innerHTML = '';
 
+            // Geramos os blocos de 4
             for (let i = 0; i < copias; i++) {
                 const linha = document.createElement('div');
                 linha.className = 'linha-etiquetas';
@@ -265,7 +259,6 @@
                     linha.innerHTML += `
                         <div class="item">
                             <span class="texto-os">OS ${os}</span>
-                            <!-- Logo da etiqueta solicitada -->
                             <img src="https://i.imgur.com/DnGmGYd.jpeg" class="logo-etiqueta">
                         </div>
                     `;
@@ -273,10 +266,9 @@
                 container.appendChild(linha);
             }
 
-            // Delay para garantir que o navegador processe o sumiço do painel
             setTimeout(() => {
                 window.print();
-            }, 300);
+            }, 350);
         }
     </script>
 </body>
