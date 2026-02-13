@@ -15,8 +15,8 @@
 
         /* CONFIGURAÇÃO DE IMPRESSÃO - FORMATO DE ROLO/ETIQUETA */
         @page {
-            size: 150mm 297mm; /* Define o tamanho exato da folha */
-            margin: 0; /* Remove margens do navegador */
+            size: 150mm 297mm;
+            margin: 0;
         }
 
         html, body {
@@ -41,7 +41,7 @@
             max-width: 500px;
             background: var(--branco);
             margin: 30px 0;
-            padding: 30px;
+            padding: 40px 30px; /* Aumentei um pouco o padding para compensar o espaço vazio */
             border-radius: 15px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             border-top: 8px solid var(--laranja);
@@ -62,7 +62,7 @@
         }
 
         .campo {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: left;
         }
 
@@ -72,6 +72,7 @@
             color: #444;
             margin-bottom: 10px;
             font-size: 0.9rem;
+            text-align: center; /* Centralizei o label */
         }
 
         input[type="text"] {
@@ -80,7 +81,7 @@
             border: 2px solid #eee;
             border-radius: 10px;
             box-sizing: border-box;
-            font-size: 1.6rem;
+            font-size: 1.8rem; /* Aumentei um pouco a fonte */
             text-align: center;
             font-weight: bold;
             color: var(--verde-escuro);
@@ -90,34 +91,6 @@
         input[type="text"]:focus {
             outline: none;
             border-color: var(--laranja);
-        }
-
-        /* Seletor de Cópias */
-        .grid-copias {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-
-        .opcao-copia input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .opcao-copia label {
-            display: block;
-            padding: 14px 0;
-            background: #f0f0f0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s, color 0.2s;
-        }
-
-        .opcao-copia input:checked + label {
-            background: var(--verde-escuro);
-            color: white;
         }
 
         .btn-imprimir {
@@ -130,7 +103,7 @@
             font-size: 1.3rem;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 25px;
+            margin-top: 10px;
             box-shadow: 0 6px 0 #083a2f;
             transition: all 0.1s;
         }
@@ -165,14 +138,13 @@
             align-items: center;
             justify-content: center;
             height: 100%;
-            overflow: hidden; /* Garante que nada vaze do quadrado */
+            overflow: hidden;
         }
 
         .logo-etiqueta {
-            /* MUDANÇA PRINCIPAL: Controle por largura para casar com o texto */
             width: 85%; 
             height: auto; 
-            max-height: 12mm; /* Trava de segurança para não invadir a linha de baixo */
+            max-height: 12mm;
             margin-top: 1mm;
             object-fit: contain;
         }
@@ -183,15 +155,15 @@
             color: #000;
             margin: 0;
             line-height: 0.85;
-            white-space: nowrap; /* Evita quebra de linha indesejada */
+            white-space: nowrap;
         }
 
-        /* CSS EXCLUSIVO PARA IMPRESSÃO - ANTI-PÁGINA BRANCA */
+        /* CSS EXCLUSIVO PARA IMPRESSÃO */
         @media print {
             html, body { 
                 background: white !important; 
-                height: 100%; /* Força a altura exata */
-                overflow: hidden !important; /* Corta qualquer excesso que gere nova página */
+                height: 100%;
+                overflow: hidden !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
@@ -200,13 +172,13 @@
             }
             #area-impressao { 
                 display: flex !important; 
-                flex-direction: column-reverse; /* Mantém a lógica de imprimir de baixo para cima se necessário, ou ajuste para column se preferir topo */
+                flex-direction: column-reverse;
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 width: 150mm;
-                height: auto; /* Deixa a altura se ajustar ao conteúdo */
-                max-height: 297mm; /* Garante que não passe de uma folha A4 */
+                height: auto;
+                max-height: 297mm;
                 overflow: hidden;
             }
             * { -webkit-print-color-adjust: exact; }
@@ -220,29 +192,15 @@
         <h2>Painel de O.S.</h2>
         
         <div class="campo">
-            <label>Número da Ordem de Serviço</label>
+            <label>Informe o Número da O.S.</label>
             <input type="text" id="os_num" placeholder="Ex: 1602" autofocus>
         </div>
 
-        <div class="campo">
-            <label>Quantidade de Linhas (4 etiquetas cada):</label>
-            <div class="grid-copias">
-                <div class="opcao-copia"><input type="radio" name="copias" id="c1" value="1" checked><label for="c1">1</label></div>
-                <div class="opcao-copia"><input type="radio" name="copias" id="c2" value="2"><label for="c2">2</label></div>
-                <div class="opcao-copia"><input type="radio" name="copias" id="c3" value="3"><label for="c3">3</label></div>
-                <div class="opcao-copia"><input type="radio" name="copias" id="c4" value="4"><label for="c4">4</label></div>
-                <div class="opcao-copia"><input type="radio" name="copias" id="c5" value="5"><label for="c5">5</label></div>
-                <div class="opcao-copia"><input type="radio" name="copias" id="c6" value="6"><label for="c6">6</label></div>
-                <div class="opcao-copia"><input type="radio" name="copias" id="c7" value="7"><label for="c7">7</label></div>
-                <div class="opcao-copia"><input type="radio" name="copias" id="c8" value="8"><label for="c8">8</label></div>
-            </div>
-        </div>
-
-        <button class="btn-imprimir" onclick="imprimir()">IMPRIMIR AGORA</button>
+        <button class="btn-imprimir" onclick="imprimir()">IMPRIMIR ETIQUETA</button>
         
         <div style="margin-top: 25px; font-size: 0.75rem; color: #777;">
             Galvão Drones - Tecnologia DJI em Goiânia<br>
-            Ajustes Fixos: 25mm / Nudge: 4mm
+            Padrão: 1 Linha (4 cópias)
         </div>
     </div>
 
@@ -251,7 +209,8 @@
     <script>
         function imprimir() {
             const os = document.getElementById('os_num').value;
-            const copias = document.querySelector('input[name="copias"]:checked').value;
+            // FIXADO: Sempre imprime 1 linha
+            const copias = 1; 
             const container = document.getElementById('area-impressao');
 
             if (!os) {
@@ -276,7 +235,6 @@
                 container.appendChild(linha);
             }
 
-            // Pequeno delay para processar o DOM antes do Print
             setTimeout(() => {
                 window.print();
             }, 250);
