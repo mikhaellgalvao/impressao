@@ -15,7 +15,7 @@
 
         /* CONFIGURAÇÃO DE IMPRESSÃO - FORMATO DE ROLO/ETIQUETA ORIGINAL */
         @page {
-            size: 150mm 297mm; /* Tamanho original solicitado */
+            size: 150mm 297mm;
             margin: 0;
         }
 
@@ -80,7 +80,6 @@
             color: var(--verde-escuro);
         }
 
-        /* Estilo para Upload */
         .upload-box {
             border: 2px dashed #ccc;
             padding: 15px;
@@ -91,9 +90,7 @@
             transition: 0.3s;
         }
 
-        .upload-box:hover {
-            border-color: var(--laranja);
-        }
+        .upload-box:hover { border-color: var(--laranja); }
 
         .btn-imprimir {
             width: 100%;
@@ -114,7 +111,7 @@
             box-shadow: 0 2px 0 #083a2f;
         }
 
-        /* ÁREA DE IMPRESSÃO (ESTRUTURA ORIGINAL) */
+        /* ÁREA DE IMPRESSÃO */
         #area-impressao {
             display: none;
             width: 150mm;
@@ -129,42 +126,42 @@
             box-sizing: border-box;
             page-break-inside: avoid;
             height: 25mm; 
-            padding-top: 2mm;
         }
 
-        /* Item Individual (Layout Horizontal: Logo à Esquerda) */
+        /* Item Individual - Redimensionado para conter tudo */
         .item {
-            flex: 1;
+            flex: 0 0 37.5mm; /* Largura exata de 1/4 de 150mm */
             width: 37.5mm;
             height: 100%;
             display: flex;
-            flex-direction: row; /* Imagem ao lado do texto */
+            flex-direction: row; 
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            padding: 0 1mm;
+            padding: 0 2mm; /* Aumentado o respiro lateral */
             box-sizing: border-box;
         }
 
         .logo-etiqueta {
-            max-width: 45%; 
+            max-width: 40%; /* Garantindo que a logo não domine a etiqueta */
             height: auto; 
-            max-height: 18mm;
+            max-height: 16mm;
             object-fit: contain;
-            margin-right: 2mm;
+            margin-right: 1.5mm;
         }
 
         .texto-os {
-            font-size: 18pt; 
-            font-weight: bold;
+            font-size: 15pt; /* Reduzido levemente para caber nomes como 'ASAF MIG' com folga */
+            font-weight: 800;
             color: #000;
             margin: 0;
             line-height: 0.9;
             white-space: nowrap;
             text-transform: uppercase;
+            max-width: 58%; /* Limite para não empurrar a logo */
+            overflow: hidden;
         }
 
-        /* CSS EXCLUSIVO PARA IMPRESSÃO - POSIÇÃO INFERIOR */
         @media print {
             html, body { 
                 background: white !important; 
@@ -173,19 +170,16 @@
                 margin: 0 !important;
                 padding: 0 !important;
             }
-            #painel-controle { 
-                display: none !important; 
-            }
+            #painel-controle { display: none !important; }
             #area-impressao { 
                 display: flex !important; 
-                flex-direction: column-reverse; /* Ordem reversa para preencher de baixo pra cima */
+                flex-direction: column-reverse;
                 position: absolute;
-                bottom: 0; /* Fixa na parte inferior */
+                bottom: 0; 
                 left: 0;
                 width: 150mm;
                 height: auto;
                 max-height: 297mm;
-                overflow: hidden;
             }
             * { -webkit-print-color-adjust: exact; }
         }
@@ -195,10 +189,10 @@
 
     <div id="painel-controle">
         <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" style="width: 150px; margin-bottom: 10px;">
-        <h2>Personalizador de Etiquetas</h2>
+        <h2>Ajuste de Impressão</h2>
         
         <div class="campo">
-            <label>1. Logomarca da Etiqueta</label>
+            <label>1. Logomarca</label>
             <div class="upload-box" onclick="document.getElementById('file-input').click()">
                 <span id="file-label">Clique para carregar imagem</span>
                 <input type="file" id="file-input" accept="image/*" style="display: none;">
@@ -206,32 +200,25 @@
         </div>
 
         <div class="campo">
-            <label>2. Texto para Imprimir</label>
-            <input type="text" id="texto_custom" placeholder="Ex: OS 1602" maxlength="15">
+            <label>2. Texto</label>
+            <input type="text" id="texto_custom" placeholder="Digite o nome ou OS" maxlength="15">
         </div>
 
-        <button class="btn-imprimir" onclick="imprimir()">IMPRIMIR ETIQUETA</button>
-        
-        <div style="margin-top: 20px; font-size: 0.75rem; color: #777;">
-            Configurado para rolo de 150mm<br>
-            Posição: Inferior da página (297mm)
-        </div>
+        <button class="btn-imprimir" onclick="imprimir()">GERAR E IMPRIMIR</button>
     </div>
 
-    <!-- Área que será enviada para a impressora -->
     <div id="area-impressao"></div>
 
     <script>
         let logoBase64 = "";
 
-        // Tratar o upload da imagem
         document.getElementById('file-input').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     logoBase64 = event.target.result;
-                    document.getElementById('file-label').innerText = "Logo carregada: " + file.name;
+                    document.getElementById('file-label').innerText = "Logo: " + file.name;
                     document.getElementById('file-label').style.color = "var(--verde-escuro)";
                 };
                 reader.readAsDataURL(file);
@@ -242,19 +229,12 @@
             const texto = document.getElementById('texto_custom').value;
             const container = document.getElementById('area-impressao');
 
-            if (!texto) {
-                alert("Por favor, digite o texto da etiqueta!");
-                return;
-            }
-
-            if (!logoBase64) {
-                alert("Por favor, carregue uma imagem para a logomarca!");
+            if (!texto || !logoBase64) {
+                alert("Preencha o texto e carregue a imagem!");
                 return;
             }
 
             container.innerHTML = '';
-
-            // Cria a linha de etiquetas (4 cópias horizontais)
             const linha = document.createElement('div');
             linha.className = 'linha-etiquetas';
 
@@ -269,10 +249,7 @@
             
             container.appendChild(linha);
 
-            // Pequeno delay para garantir renderização da imagem antes do print
-            setTimeout(() => {
-                window.print();
-            }, 300);
+            setTimeout(() => { window.print(); }, 300);
         }
     </script>
 </body>
