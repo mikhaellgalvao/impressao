@@ -56,7 +56,7 @@
         }
 
         .campo {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: left;
         }
 
@@ -64,17 +64,17 @@
             display: block;
             font-weight: bold;
             color: #444;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 2px solid #eee;
             border-radius: 8px;
             box-sizing: border-box;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             text-align: center;
             font-weight: bold;
             color: var(--verde-escuro);
@@ -86,15 +86,16 @@
             border-radius: 8px;
             cursor: pointer;
             background: #fafafa;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             transition: 0.3s;
+            text-align: center;
         }
 
         .upload-box:hover { border-color: var(--laranja); }
 
         .btn-imprimir {
             width: 100%;
-            padding: 20px;
+            padding: 18px;
             background: var(--verde-escuro);
             color: white;
             border: none;
@@ -104,6 +105,7 @@
             cursor: pointer;
             box-shadow: 0 6px 0 #083a2f;
             transition: all 0.1s;
+            margin-top: 10px;
         }
 
         .btn-imprimir:active {
@@ -128,39 +130,48 @@
             height: 25mm; 
         }
 
-        /* Item Individual - Redimensionado para conter tudo */
+        /* Item Individual - Layout com Logo à esquerda e 2 linhas à direita */
         .item {
-            flex: 0 0 37.5mm; /* Largura exata de 1/4 de 150mm */
+            flex: 0 0 37.5mm; 
             width: 37.5mm;
-            height: 100%;
+            height: 25mm;
             display: flex;
             flex-direction: row; 
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             overflow: hidden;
-            padding: 0 2mm; /* Aumentado o respiro lateral */
+            padding: 0 1.5mm; 
             box-sizing: border-box;
         }
 
         .logo-etiqueta {
-            max-width: 40%; /* Garantindo que a logo não domine a etiqueta */
+            max-width: 38%; 
             height: auto; 
-            max-height: 16mm;
+            max-height: 20mm;
             object-fit: contain;
-            margin-right: 1.5mm;
+            margin-right: 1mm;
         }
 
-        .texto-os {
-            font-size: 15pt; /* Reduzido levemente para caber nomes como 'ASAF MIG' com folga */
+        .container-texto {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            max-width: 60%;
+            overflow: hidden;
+        }
+
+        .texto-linha {
             font-weight: 800;
             color: #000;
             margin: 0;
-            line-height: 0.9;
+            line-height: 1.1;
             white-space: nowrap;
             text-transform: uppercase;
-            max-width: 58%; /* Limite para não empurrar a logo */
-            overflow: hidden;
         }
+
+        .linha-1 { font-size: 12pt; }
+        .linha-2 { font-size: 10pt; }
 
         @media print {
             html, body { 
@@ -188,20 +199,25 @@
 <body>
 
     <div id="painel-controle">
-        <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" style="width: 150px; margin-bottom: 10px;">
-        <h2>Ajuste de Impressão</h2>
+        <img src="https://i.imgur.com/QGwrpcm.png" alt="Galvão Drones" style="width: 140px; margin-bottom: 10px;">
+        <h2>Gerador de Etiquetas</h2>
         
         <div class="campo">
-            <label>1. Logomarca</label>
+            <label>1. Carregar Logomarca</label>
             <div class="upload-box" onclick="document.getElementById('file-input').click()">
-                <span id="file-label">Clique para carregar imagem</span>
+                <span id="file-label" style="font-size: 0.8rem;">Clique para selecionar imagem</span>
                 <input type="file" id="file-input" accept="image/*" style="display: none;">
             </div>
         </div>
 
         <div class="campo">
-            <label>2. Texto</label>
-            <input type="text" id="texto_custom" placeholder="Digite o nome ou OS" maxlength="15">
+            <label>2. Texto - Linha 1 (Principal)</label>
+            <input type="text" id="linha_1" placeholder="Ex: ASAF MIG" maxlength="15">
+        </div>
+
+        <div class="campo">
+            <label>3. Texto - Linha 2 (Secundário)</label>
+            <input type="text" id="linha_2" placeholder="Ex: O.S. 1602" maxlength="20">
         </div>
 
         <button class="btn-imprimir" onclick="imprimir()">GERAR E IMPRIMIR</button>
@@ -226,11 +242,12 @@
         });
 
         function imprimir() {
-            const texto = document.getElementById('texto_custom').value;
+            const txt1 = document.getElementById('linha_1').value;
+            const txt2 = document.getElementById('linha_2').value;
             const container = document.getElementById('area-impressao');
 
-            if (!texto || !logoBase64) {
-                alert("Preencha o texto e carregue a imagem!");
+            if (!txt1 || !logoBase64) {
+                alert("Preencha ao menos a primeira linha e carregue a imagem!");
                 return;
             }
 
@@ -242,7 +259,10 @@
                 linha.innerHTML += `
                     <div class="item">
                         <img src="${logoBase64}" class="logo-etiqueta">
-                        <span class="texto-os">${texto}</span>
+                        <div class="container-texto">
+                            <span class="texto-linha linha-1">${txt1}</span>
+                            <span class="texto-linha linha-2">${txt2}</span>
+                        </div>
                     </div>
                 `;
             }
